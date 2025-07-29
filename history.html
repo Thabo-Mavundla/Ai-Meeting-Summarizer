@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Meeting History</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+</head>
+<body class="{{ 'light' if theme == 'light' else 'dark' }}">
+  <div class="theme-toggle">
+    <label class="switch">
+      <input type="checkbox" id="themeSwitch" {{ 'checked' if theme == 'light' else '' }}>
+      <span class="slider"></span>
+    </label>
+  </div>
+
+  <header class="navbar">
+    <div class="navbar-brand">
+      <span class="logo-icon">🗣️</span> Meeting History
+    </div>
+    <nav class="navbar-nav">
+          <ul>
+            <li><a href="/" class="nav-link {% if request.path == '/' %}active{% endif %}">Home</a></li>
+            <li><a href="/history" class="nav-link {% if request.path == '/history' %}active{% endif %}">History</a></li>
+            <li><a href="/about" class="nav-link {% if request.path == '/about' %}active{% endif %}">About</a></li>
+            <li><a href="/contact" class="nav-link {% if request.path == '/contact' %}active{% endif %}">Contact</a></li>
+          </ul>
+        </nav>
+  </header>
+
+  <main class="history-container">
+    {% if not history %}
+      <div class="card empty-state">
+        <h3>No meeting history yet</h3>
+        <p>Your processed meetings will appear here</p>
+      </div>
+    {% endif %}
+
+    <div class="history-grid">
+      {% for entry in history %}
+      <div class="history-card card">
+        <div class="card-header">
+          <h3>{{ entry.filename }}</h3>
+          <small>{{ entry.timestamp }}</small>
+          <button class="delete-btn" data-filename="{{ entry.filename }}" data-timestamp="{{ entry.timestamp }}">🗑️</button>
+        </div>
+        
+        <div class="card-section">
+          <h4>📝 Transcription</h4>
+          <div class="scrollable-content">{{ entry.transcription }}</div>
+        </div>
+        
+        <div class="card-section">
+          <h4>💡 Summary</h4>
+          <div class="scrollable-content">{{ entry.summary }}</div>
+        </div>
+        
+        <div class="card-actions">
+          <a href="{{ entry.audio_url }}" class="download-btn" download>Download Audio</a>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </main>
+
+  <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
